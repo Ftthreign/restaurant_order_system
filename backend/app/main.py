@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers import (
     customers_router,
@@ -14,7 +15,13 @@ app = FastAPI(
     description="Sistem pemesanan restoran dengan reservasi, menu, order, dan laporan.",
     version="1.0.0",
 )
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Register all routers
 app.include_router(customers_router)
