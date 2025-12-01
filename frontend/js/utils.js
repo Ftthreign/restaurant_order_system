@@ -55,3 +55,15 @@ function showWarning(message) {
 function confirmAction(message) {
   return confirm(message);
 }
+
+function showError(message) {
+  const toast = document.getElementById("error-toast");
+  toast.innerText = message;
+
+  toast.classList.remove("hidden");
+
+  // hide after 3s
+  setTimeout(() => {
+    toast.classList.add("hidden");
+  }, 3000);
+}

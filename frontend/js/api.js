@@ -1,29 +1,38 @@
-// API Helper Functions
 async function api(endpoint, method = "GET", body = null) {
   const options = {
     method,
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      Accept: "application/json",
+      ...(body ? { "Content-Type": "application/json" } : {}),
+    },
+    body: body ? JSON.stringify(body) : undefined,
   };
-
-  if (body) {
-    options.body = JSON.stringify(body);
-  }
 
   try {
     const response = await fetch(`${CONFIG.API_BASE_URL}${endpoint}`, options);
 
-    // Update connection status
     updateApiStatus(true);
 
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.statusText}`);
+    const text = await response.text();
+    let data;
+
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch {
+      data = text;
     }
 
-    return await response.json();
+    if (!response.ok) {
+      const message =
+        data?.detail || response.statusText || "Unknown API Error";
+      throw new Error(message);
+    }
+
+    return data;
   } catch (error) {
     console.error("Fetch error:", error);
     updateApiStatus(false);
-    return null;
+    throw error;
   }
 }
 
