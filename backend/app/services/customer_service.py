@@ -42,7 +42,7 @@ class CustomerService:
 
         db.commit()
         db.refresh(customer)
-        return {"message": "Customer updated successfully", "customer": customer}
+        return customer
 
     @staticmethod
     def delete_customer(db: Session, customer_id: str):
