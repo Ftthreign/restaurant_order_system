@@ -10,7 +10,11 @@ class OrderItem(Base):
 
     id = Column(CHAR(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     order_id = Column(CHAR(36), ForeignKey('orders.id'), nullable=False)
-    menu_id = Column(CHAR(36), ForeignKey('menus.id'), nullable=False)
+    menu_id = Column(
+        CHAR(36),
+        ForeignKey('menus.id', ondelete="SET NULL"),
+        nullable=True
+    )
     quantity = Column(Integer, nullable=False)
     subtotal = Column(Integer, nullable=False)
 

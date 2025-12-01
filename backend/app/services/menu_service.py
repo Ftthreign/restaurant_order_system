@@ -42,7 +42,14 @@ class MenuService:
 
     @staticmethod
     def delete(db: Session, menu_id: str):
-        menu = MenuService.get(db, menu_id)
+        menu = db.query(Menu).filter(Menu.id == menu_id).first()
+        if not menu:
+            raise HTTPException(404, "Menu not found")
+
+        if menu.order_items:
+            raise HTTPException(
+                400, "Menu cannot be deleted because it is used in order items")
+
         db.delete(menu)
         db.commit()
         return {"message": "Menu deleted"}
