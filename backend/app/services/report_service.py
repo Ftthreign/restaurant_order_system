@@ -5,9 +5,27 @@ from app.models import Order, Reservation, OrderItem, Menu
 
 
 class ReportService:
+    """
+    Service class for generating analytical reports.
+    Provides methods for summarizing daily sales and ranking menu popularity.
+    """
 
     @staticmethod
     def daily_sales(db: Session):
+        """
+        Generate daily sales summary.
+
+        Retrieves total sales grouped by reservation date. Each row represents
+        the sum of all order totals for a specific day.
+
+        Parameters:
+            db (Session): Active database session.
+
+        Returns:
+            list[dict]: List of dictionaries containing:
+                - date: Reservation date
+                - total_sales: Total income for that date
+        """
         rows = (
             db.query(
                 Reservation.date.label("date"),
@@ -25,6 +43,20 @@ class ReportService:
 
     @staticmethod
     def menu_rank(db: Session):
+        """
+        Generate ranking of menu items by total quantity sold.
+
+        Calculates total quantity sold per menu item across all orders and
+        sorts them in descending order of popularity.
+
+        Parameters:
+            db (Session): Active database session.
+
+        Returns:
+            list[dict]: List of dictionaries containing:
+                - menu: Menu item name
+                - qty_sold: Total quantity sold
+        """
         rows = (
             db.query(
                 Menu.name.label("menu"),
