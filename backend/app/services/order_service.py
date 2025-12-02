@@ -7,25 +7,25 @@ from app.schemas import OrderCreate, OrderItemBase
 
 class OrderService:
     """
-    Service class untuk mengelola proses bisnis Order dan OrderItem.
-    Mencakup pembuatan order, penambahan item, update item, penghapusan item,
-    serta perhitungan ulang total harga.
+    Service class for handling business logic of Orders and OrderItems.
+    Includes creating orders, adding items, updating items, deleting items,
+    and recalculating the total price.
     """
 
     @staticmethod
     def create_order(db: Session, payload: OrderCreate):
         """
-        Membuat order baru berdasarkan reservasi.
+        Create a new order based on reservation.
 
         Parameters:
-            db (Session): Session database aktif.
-            payload (OrderCreate): Data input berisi reservation_id.
+            db (Session): Active database session.
+            payload (OrderCreate): Input containing reservation_id.
 
         Returns:
-            Order: Objek order yang berhasil dibuat.
+            Order: Newly created order instance.
 
         Raises:
-            HTTPException: Jika proses penyimpanan gagal.
+            HTTPException: If saving fails.
         """
         order = Order(
             reservation_id=payload.reservation_id,
@@ -39,20 +39,20 @@ class OrderService:
     @staticmethod
     def add_order_item(db: Session, order_id: str, item: OrderItemBase):
         """
-        Menambahkan item menu ke dalam order.
+        Add a menu item into an order.
 
         Parameters:
-            db (Session): Session database aktif.
-            order_id (str): ID order tujuan.
-            item (OrderItemBase): Data menu_id dan quantity.
+            db (Session): Active database session.
+            order_id (str): Target order ID.
+            item (OrderItemBase): Contains menu_id and quantity.
 
         Returns:
-            Order: Order yang sudah diperbarui dengan item baru.
+            Order: Updated order with the added item.
 
         Raises:
             HTTPException:
-                - 404 jika order tidak ditemukan
-                - 404 jika menu tidak ditemukan
+                - 404 if order not found
+                - 404 if menu not found
         """
         order = db.query(Order).filter(Order.id == order_id).first()
         if not order:
@@ -81,17 +81,17 @@ class OrderService:
     @staticmethod
     def get_order(db: Session, order_id: str):
         """
-        Mengambil detail order berdasarkan ID.
+        Retrieve an order by ID.
 
         Parameters:
-            db (Session): Session database aktif.
-            order_id (str): ID order.
+            db (Session): Active database session.
+            order_id (str): Order ID.
 
         Returns:
-            Order: Order yang ditemukan.
+            Order: Found order.
 
         Raises:
-            HTTPException: Jika order tidak ditemukan.
+            HTTPException: If order not found.
         """
         order = db.query(Order).filter(Order.id == order_id).first()
         if not order:
@@ -101,34 +101,34 @@ class OrderService:
     @staticmethod
     def get_all_order(db: Session):
         """
-        Mengambil seluruh daftar order.
+        Retrieve all orders.
 
         Parameters:
-            db (Session): Session database aktif.
+            db (Session): Active database session.
 
         Returns:
-            list[Order]: Daftar seluruh order.
+            list[Order]: List of orders.
         """
         return db.query(Order).all()
 
     @staticmethod
     def update_order_item(db: Session, order_id: str, item_id: str, payload: OrderItemBase):
         """
-        Memperbarui item dalam order.
+        Update an existing item inside an order.
 
         Parameters:
-            db (Session): Session database aktif.
-            order_id (str): ID order.
-            item_id (str): ID item yang akan diperbarui.
-            payload (OrderItemBase): Data menu_id dan quantity baru.
+            db (Session): Active database session.
+            order_id (str): Order ID.
+            item_id (str): Item ID to update.
+            payload (OrderItemBase): Contains new menu_id and quantity.
 
         Returns:
-            Order: Order yang sudah diperbarui.
+            Order: Updated order.
 
         Raises:
             HTTPException:
-                - 404 jika order item tidak ditemukan
-                - 404 jika menu tidak ditemukan
+                - 404 if order item not found
+                - 404 if menu not found
         """
         item = db.query(OrderItem).filter(
             OrderItem.id == item_id,
@@ -156,18 +156,18 @@ class OrderService:
     @staticmethod
     def delete_order_item(db: Session, order_id: str, item_id: str):
         """
-        Menghapus item dari order dan menghitung ulang total harga.
+        Delete an item from an order and recalculate total price.
 
         Parameters:
-            db (Session): Session database aktif.
-            order_id (str): ID order.
-            item_id (str): ID item yang akan dihapus.
+            db (Session): Active database session.
+            order_id (str): Order ID.
+            item_id (str): Item ID to delete.
 
         Returns:
-            Order: Order setelah item dihapus dan total diperbarui.
+            Order: Updated order after deletion.
 
         Raises:
-            HTTPException: 404 jika item tidak ditemukan.
+            HTTPException: 404 if item not found.
         """
         item = db.query(OrderItem).filter(
             OrderItem.id == item_id,
